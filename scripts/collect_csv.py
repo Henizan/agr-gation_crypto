@@ -8,14 +8,12 @@ merged_list = []
 for file in files:
     df = pd.read_csv(DATA_DIR / file)
 
-    # Ajoute les colonnes crypto & source
-    df["crypto"] = file.split("USD")[0]  # ex: BTC, ETH, XRP
+    df["crypto"] = file.split("USD")[0] 
     df["source"] = "Binance CSV"
 
     # Prend uniquement les colonnes utiles
     df = df[["Open time", "Open", "High", "Low", "Close", "Volume", "crypto", "source"]]
 
-    # Renomme les colonnes pour uniformiser
     df = df.rename(columns={
         "Open time": "date",
         "Close": "price_usd",
