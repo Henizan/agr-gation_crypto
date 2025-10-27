@@ -1,32 +1,35 @@
 import pandas as pd
 from pathlib import Path
 
-# Charge les fichiers Binance
+DATA_DIR = Path("C:/ece_B3/projet_agr_crypto/data")
+
 files = ["BTCUSD_1d_Binance.csv", "ETHUSD_1d_Binance.csv", "XRPUSD_1d_Binance.csv"]
 merged_list = []
 
 for file in files:
+    print(f"📄 Traitement de {file}...")
     df = pd.read_csv(DATA_DIR / file)
 
-    df["crypto"] = file.split("USD")[0] 
-    df["source"] = "Binance CSV"
+    df["Crypto"] = file.split("USD")[0]
 
-    # Prend uniquement les colonnes utiles
-    df = df[["Open time", "Open", "High", "Low", "Close", "Volume", "crypto", "source"]]
+    df = df[["Open", "High", "Low", "Close", "Volume", "Open time", "Close time", "Crypto"]]
 
     df = df.rename(columns={
-        "Open time": "date",
-        "Close": "price_usd",
-        "Volume": "volume_usd"
+        "Open": "Open",
+        "High": "High",
+        "Low": "Low",
+        "Close": "Close",
+        "Volume": "Volume",
+        "Open time": "Open Time",
+        "Close time": "Close Time",
+        "Crypto": "Crypto"
     })
 
-    df["date"] = pd.to_datetime(df["date"]).dt.strftime("%d-%m-%Y")
+    df["Open Time"] = pd.to_datetime(df["Open Time"]).dt.strftime("%Y-%m-%d %H:%M:%S")
+    df["Close Time"] = pd.to_datetime(df["Close Time"]).dt.strftime("%Y-%m-%d %H:%M:%S")
 
     merged_list.append(df)
 
-# Fusionne toutes les cryptos
 merged = pd.concat(merged_list, ignore_index=True)
 
-# Sauvegarde le CSV propre dans le fichier data
-merged.to_csv("data/kaggle_data.csv", index=False)
-
+merged.to_csv(DATA_DIR / "kaggle_data.csv", index=False)
